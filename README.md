@@ -1,50 +1,93 @@
 # BLACKBOX SQUADRON
 
-A single-file HTML/CSS/JavaScript vertical arcade shooter prototype.
+Retro-inspired vertical arcade shooter built entirely in HTML5 Canvas.
 
-Current build: **v0.1.4**
+Fly a prototype interceptor through escalating combat zones, survive randomized enemy waves, collect power-ups, and push as far as possible through increasingly hostile airspace.
 
-## Play locally
+## Play Online
 
-Open `index.html` in a browser.
+https://skabkleveta-creator.github.io/BLACKBOX_SQUADRON_Public_Game/
 
-## Publish with GitHub Pages
+## Current Release
 
-1. Create a new GitHub repository.
-2. Upload everything in this folder to the repository root.
-3. Go to **Settings → Pages**.
-4. Under **Build and deployment**, choose:
-   - Source: **Deploy from a branch**
-   - Branch: **main**
-   - Folder: **/root**
-5. Save.
-6. GitHub will generate a Pages URL after the deployment finishes.
+Version: v0.2.1
+
+### Features
+
+* Vertical arcade shooter gameplay
+* Keyboard and mobile touch controls
+* Dynamic difficulty progression
+* Level Director system
+* Difficulty Bands and Modifiers
+* Multiple enemy types
+* Destructible obstacles
+* Power-up system
+* Shield pickups
+* Bomb pickups
+* Repair pickups
+* Rapid Fire
+* Spread Shot
+* Rail Cannon
+* Drone Support
+* Persistent High Score
 
 ## Controls
 
-Keyboard:
-- Arrow keys / WASD: move
-- Space: fire
-- C: bomb
-- Enter: start / pause
-- R: restart
+### Desktop
 
-Touch:
-- D-pad: move
-- FIRE: fire
-- BOMB: bomb
-- START: start / pause
-- RST: restart
+* Arrow Keys / WASD — Move
+* Space — Fire
+* C — Bomb
+* Enter — Start / Pause
+* R — Restart
 
-## Next planned patch
+### Mobile
 
-v0.2 should add:
-- expanded power-up table
-- health / repair pickups
-- bomb pickups
-- shield pickups
-- rapid fire, rail, and drone power-ups
-- level director / randomizer
-- difficulty bands and modifiers
+* Virtual D-Pad — Move
+* FIRE — Fire Weapon
+* BOMB — Use Bomb
+* START — Start / Pause
+* RST — Restart
 
-See `docs/NEXT_PATCH_V0.2_POWERUPS_LEVEL_DIRECTOR.md`.
+## Power-Ups
+
+| Pickup | Effect              |
+| ------ | ------------------- |
+| S      | Spread Shot         |
+| R      | Rapid Fire          |
+| H      | Shield              |
+| B      | Bomb Refill         |
+| L      | Repair / Extra Life |
+| $      | Bonus Score         |
+| P      | Rail Cannon         |
+| D      | Drone Support       |
+
+## Difficulty Progression
+
+* Training Fire
+* Live Contact
+* Hot Zone
+* Kill Box
+* Black Sky
+* Endless War
+
+Each level introduces new modifiers, enemy mixes, and escalation patterns.
+
+## Technology
+
+* HTML5
+* Canvas API
+* Vanilla JavaScript
+* Single-file architecture
+* No frameworks
+* No external assets
+
+## Development Notes
+
+BLACKBOX SQUADRON began as an experiment exploring what could be created using browser-native technology and AI-assisted development while remaining within a limited hobby budget.
+
+The project focuses on fast iteration, arcade feel, and portable deployment through GitHub Pages.
+
+## License
+
+Personal project. All rights reserved.
