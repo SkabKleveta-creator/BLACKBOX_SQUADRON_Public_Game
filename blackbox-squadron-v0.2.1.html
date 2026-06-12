@@ -1280,6 +1280,7 @@ function triggerBomb() {
 
 function toggleStartPause() {
   if (game.state === STATE.START || game.state === STATE.GAME_OVER) {
+    restartGame();
     startGame();
   } else if (game.state === STATE.PLAYING) {
     game.state = STATE.PAUSED;
