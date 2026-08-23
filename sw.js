@@ -1,5 +1,5 @@
-/* BLACKBOX SQUADRON v0.4.1 — iOS input/audio hotfix */
-const CACHE_NAME = "blackbox-squadron-v0.4.1-hotfix";
+/* BLACKBOX SQUADRON v0.4.2 — mobile input/audio hotfix */
+const CACHE_NAME = "blackbox-squadron-v0.4.2-input-hotfix";
 const APP_SHELL = [
   "./",
   "./index.html",
@@ -31,9 +31,9 @@ self.addEventListener("activate", event => {
 async function injectHardeningHotfix(response) {
   if (!response) return response;
   const text = await response.text();
-  const tag = '<script src="./hardening-hotfix-v0.4.1.js?v=041"></script>';
+  const tag = '<script src="./hardening-hotfix-v0.4.1.js?v=042"></script>';
   const body = text.includes("hardening-hotfix-v0.4.1.js")
-    ? text
+    ? text.replace(/<script src="\.\/hardening-hotfix-v0\.4\.1\.js[^\"]*"><\/script>/, tag)
     : text.replace("</body>", tag + "</body>");
   const headers = new Headers(response.headers);
   headers.set("content-type", "text/html; charset=utf-8");
