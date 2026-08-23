@@ -1,8 +1,9 @@
-/* BLACKBOX SQUADRON v0.3.2 — PWA Cache */
-const CACHE_NAME = "blackbox-squadron-v0.3.2-pwa";
+/* BLACKBOX SQUADRON v0.4.0 — PWA Cache */
+const CACHE_NAME = "blackbox-squadron-v0.4.0-hardening";
 const APP_SHELL = [
   "./",
   "./index.html",
+  "./blackbox-squadron-v0.2.3.html",
   "./manifest.webmanifest",
   "./icons/icon-192.png",
   "./icons/icon-512.png",
@@ -12,13 +13,17 @@ const APP_SHELL = [
 
 self.addEventListener("install", (event) => {
   event.waitUntil(
-    caches.open(CACHE_NAME).then((cache) => cache.addAll(APP_SHELL)).then(() => self.skipWaiting())
+    caches.open(CACHE_NAME)
+      .then((cache) => cache.addAll(APP_SHELL))
+      .then(() => self.skipWaiting())
   );
 });
 
 self.addEventListener("activate", (event) => {
   event.waitUntil(
-    caches.keys().then((keys) => Promise.all(keys.filter((key) => key !== CACHE_NAME).map((key) => caches.delete(key)))).then(() => self.clients.claim())
+    caches.keys()
+      .then((keys) => Promise.all(keys.filter((key) => key !== CACHE_NAME).map((key) => caches.delete(key))))
+      .then(() => self.clients.claim())
   );
 });
 
@@ -30,11 +35,13 @@ self.addEventListener("fetch", (event) => {
 
   if (req.mode === "navigate") {
     event.respondWith(
-      fetch(req).then((res) => {
-        const copy = res.clone();
-        caches.open(CACHE_NAME).then((cache) => cache.put("./index.html", copy));
-        return res;
-      }).catch(() => caches.match("./index.html").then((cached) => cached || caches.match("./")))
+      fetch(req)
+        .then((res) => {
+          const copy = res.clone();
+          caches.open(CACHE_NAME).then((cache) => cache.put("./index.html", copy));
+          return res;
+        })
+        .catch(() => caches.match("./index.html").then((cached) => cached || caches.match("./")))
     );
     return;
   }
