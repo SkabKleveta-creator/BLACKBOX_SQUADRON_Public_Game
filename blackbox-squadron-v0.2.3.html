@@ -474,23 +474,28 @@
       });
 
       function bindHold(el, set) {
+        const pointers = new Set();
+        const sync = () => set(pointers.size > 0);
         const down = (e) => {
           e.preventDefault();
-          if (el.setPointerCapture && e.pointerId !== undefined) {
-            try {
-              el.setPointerCapture(e.pointerId);
-            } catch (err) {}
+          pointers.add(e.pointerId);
+          if (el.setPointerCapture) {
+            try { el.setPointerCapture(e.pointerId); } catch (err) {}
           }
-          set(true);
+          sync();
         };
         const up = (e) => {
           e.preventDefault();
-          set(false);
+          pointers.delete(e.pointerId);
+          sync();
         };
         el.addEventListener("pointerdown", down);
         el.addEventListener("pointerup", up);
         el.addEventListener("pointercancel", up);
-        el.addEventListener("pointerleave", up);
+        el.addEventListener("lostpointercapture", up);
+        window.addEventListener("pointerup", up);
+        window.addEventListener("pointercancel", up);
+        window.addEventListener("blur", () => { pointers.clear(); sync(); });
       }
 
       function bindTap(el, fn) {
