@@ -1,84 +1,56 @@
-/* BLACKBOX SQUADRON v0.4.2 — mobile input/audio hotfix */
-const CACHE_NAME = "blackbox-squadron-v0.4.2-input-hotfix";
-const APP_SHELL = [
-  "./",
-  "./index.html",
-  "./blackbox-squadron-v0.2.3.html",
-  "./hardening-hotfix-v0.4.1.js",
-  "./manifest.webmanifest",
-  "./icons/icon-192.png",
-  "./icons/icon-512.png",
-  "./icons/icon-512-maskable.png",
-  "./icons/apple-touch-icon.png"
+/* BLACKBOX SQUADRON v0.5.0 — atomic, scoped offline app shell. */
+'use strict';
+const VERSION = 'v0.5.0';
+const SCOPE = new URL(self.registration.scope);
+const CACHE_PREFIX = 'blackbox-squadron:' + encodeURIComponent(SCOPE.pathname) + ':';
+const CACHE_NAME = CACHE_PREFIX + VERSION;
+const SHELL_PATHS = [
+  './', './index.html', './css/game.css', './js/game.js', './js/campaign.js',
+  './js/presentation.js', './js/platform.js', './js/ui.js', './manifest.webmanifest',
+  './icons/icon.svg', './icons/icon-192.png', './icons/icon-512.png',
+  './icons/icon-512-maskable.png', './icons/apple-touch-icon.png'
 ];
-
-self.addEventListener("install", event => {
-  event.waitUntil(
-    caches.open(CACHE_NAME)
-      .then(cache => cache.addAll(APP_SHELL))
-      .then(() => self.skipWaiting())
-  );
+const SHELL_URLS = SHELL_PATHS.map(path => new URL(path, SCOPE).href);
+const SHELL = new Set(SHELL_URLS);
+self.addEventListener('install', event => {
+  // A missing file rejects installation; the prior complete version remains usable.
+  event.waitUntil(caches.open(CACHE_NAME).then(cache => cache.addAll(SHELL_URLS.map(url => new Request(url, { cache: 'reload' })))).then(() => self.skipWaiting()));
 });
-
-self.addEventListener("activate", event => {
-  event.waitUntil(
-    caches.keys()
-      .then(keys => Promise.all(keys.filter(key => key !== CACHE_NAME).map(key => caches.delete(key))))
-      .then(() => self.clients.claim())
-  );
+self.addEventListener('activate', event => {
+  event.waitUntil((async () => {
+    for (const key of await caches.keys()) {
+      if (key.startsWith(CACHE_PREFIX) && key !== CACHE_NAME) await caches.delete(key);
+      // Migrate old releases only when every cached request belongs to this game.
+      if (/^blackbox-squadron-v\d/.test(key)) {
+        const cache = await caches.open(key), requests = await cache.keys();
+        if (requests.length && requests.every(request => { const u = new URL(request.url); return u.origin === SCOPE.origin && u.pathname.startsWith(SCOPE.pathname); })) await caches.delete(key);
+      }
+    }
+    await self.clients.claim();
+  })());
 });
-
-async function injectHardeningHotfix(response) {
-  if (!response) return response;
-  const text = await response.text();
-  const tag = '<script src="./hardening-hotfix-v0.4.1.js?v=042"></script>';
-  const body = text.includes("hardening-hotfix-v0.4.1.js")
-    ? text.replace(/<script src="\.\/hardening-hotfix-v0\.4\.1\.js[^\"]*"><\/script>/, tag)
-    : text.replace("</body>", tag + "</body>");
-  const headers = new Headers(response.headers);
-  headers.set("content-type", "text/html; charset=utf-8");
-  headers.delete("content-length");
-  return new Response(body, {status: response.status, statusText: response.statusText, headers});
-}
-
-self.addEventListener("fetch", event => {
-  const req = event.request;
-  if (req.method !== "GET") return;
-  const url = new URL(req.url);
-  if (url.origin !== self.location.origin) return;
-
-  if (url.pathname.endsWith("/blackbox-squadron-v0.2.3.html")) {
-    event.respondWith(
-      fetch(req)
-        .then(res => injectHardeningHotfix(res))
-        .catch(async () => injectHardeningHotfix(await caches.match("./blackbox-squadron-v0.2.3.html")))
-    );
-    return;
-  }
-
-  if (req.mode === "navigate") {
-    event.respondWith(
-      fetch(req)
-        .then(res => {
-          const copy = res.clone();
-          caches.open(CACHE_NAME).then(cache => cache.put("./index.html", copy));
-          return res;
-        })
-        .catch(() => caches.match("./index.html").then(cached => cached || caches.match("./")))
-    );
-    return;
-  }
-
-  event.respondWith(
-    caches.match(req).then(cached => {
-      if (cached) return cached;
-      return fetch(req).then(res => {
-        if (res && res.status === 200) {
-          const copy = res.clone();
-          caches.open(CACHE_NAME).then(cache => cache.put(req, copy));
-        }
-        return res;
-      });
-    })
-  );
+self.addEventListener('fetch', event => {
+  const request = event.request;
+  if (request.method !== 'GET') return;
+  const url = new URL(request.url);
+  if (url.origin !== SCOPE.origin || !url.pathname.startsWith(SCOPE.pathname)) return;
+  url.search = ''; url.hash = '';
+  if (!SHELL.has(url.href)) return;
+  event.respondWith((async () => {
+    const cache = await caches.open(CACHE_NAME);
+    const cached = await cache.match(url.href);
+    if (cached) return cached;
+    // Only a successful same-origin response may repair an evicted cache entry.
+    try {
+      const response = await fetch(request);
+      if (response.ok && response.type !== 'opaque') await cache.put(url.href, response.clone());
+      return response;
+    } catch (_) {
+      if (request.mode === 'navigate') {
+        const fallback = await cache.match(new URL('./index.html', SCOPE).href);
+        if (fallback) return fallback;
+      }
+      return new Response('BLACKBOX SQUADRON is not cached yet. Reconnect once to finish installation.', { status: 503, headers: { 'Content-Type': 'text/plain; charset=utf-8' } });
+    }
+  })());
 });
