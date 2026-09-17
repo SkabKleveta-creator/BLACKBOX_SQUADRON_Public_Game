@@ -6,6 +6,10 @@ Run `npm test` with Node 20+. The suite verifies core combat regressions, campai
 
 Campaign simulation exercised all twelve sectors with real firing/collision updates and upgrade selection. Invulnerability was used only in this simulation to isolate progression; this does not establish human difficulty balance.
 
+## Browser verification
+
+The live GitHub Pages build was checked in Chrome: launch with callsign/difficulty, active rendering, pause, settings, hangar checkpoint availability, and responsive portrait layouts at 390×844 and 375×667. A short landscape viewport exposed a layout problem; the release includes a compact flight layout for those windows. GitHub Actions passed the regression suite and Pages deployment succeeded. Physical touch/controller checks below remain outstanding.
+
 ## Browser acceptance
 
 - Launch from the primary button and keyboard; callsign entry must not control the ship.

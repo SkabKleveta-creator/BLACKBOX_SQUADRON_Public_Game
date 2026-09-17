@@ -1,6 +1,6 @@
 /* BLACKBOX SQUADRON v0.5.0 — atomic, scoped offline app shell. */
 'use strict';
-const VERSION = 'v0.5.0';
+const VERSION = 'v0.5.0-r2';
 const SCOPE = new URL(self.registration.scope);
 const CACHE_PREFIX = 'blackbox-squadron:' + encodeURIComponent(SCOPE.pathname) + ':';
 const CACHE_NAME = CACHE_PREFIX + VERSION;
