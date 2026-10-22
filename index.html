@@ -10,12 +10,12 @@
   <link rel="manifest" href="manifest.webmanifest">
   <link rel="icon" href="icons/icon.svg" type="image/svg+xml">
   <link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
-  <link rel="stylesheet" href="css/game.css?v=0501">
-  <script src="js/game.js?v=0501" defer></script>
+  <link rel="stylesheet" href="css/game.css?v=0600"><style>body{background:radial-gradient(ellipse at 50% 0%,#152f48 0%,#070d13 60%)}.cockpit{filter:drop-shadow(0 0 22px rgba(0,208,255,.08))}.flight-stick{position:relative;width:132px;height:132px;flex:0 0 132px;border-radius:50%;touch-action:none;user-select:none;background:radial-gradient(circle,#193b54 0%,#0b1b2a 60%,#06121e 100%);border:2px solid #39849f;box-shadow:inset 0 0 24px #05101a,0 0 22px #0099cc55}.flight-stick:after{content:"";position:absolute;inset:13px;border:1px dashed #377a90;border-radius:50%;pointer-events:none}.flight-stick-knob{position:absolute;left:50%;top:50%;width:56px;height:56px;border-radius:50%;transform:translate(-50%,-50%);background:radial-gradient(circle at 35% 30%,#74d9f1,#17617c 65%,#092d43);border:2px solid #a4f4ff;box-shadow:0 0 18px #22c7f877;pointer-events:none}#t-fire{box-shadow:0 0 20px #00d9ff66}#wrap{box-shadow:0 0 40px #087aa633}</style>
+  <script src="js/game.js?v=0600" defer></script>
   <script src="js/campaign.js?v=0501" defer></script>
   <script src="js/presentation.js?v=0501" defer></script>
   <script src="js/platform.js?v=0501" defer></script>
-  <script src="js/ui.js?v=0501" defer></script>
+  <script src="js/ui.js?v=0600" defer></script>
 </head>
 <body>
   <header class="masthead">
@@ -42,20 +42,31 @@
         </div>
         <div id="toast" class="toast" role="status" aria-live="polite"></div>
       </div>
-      <div class="flight-bottomline"><span>OPERATION DEAD SIGNAL</span><span>v0.5.0 <i class="status-dot"></i></span></div>
+      <div class="flight-bottomline"><span>OPERATION DEAD SIGNAL</span><span>v0.6.0 ITCH SANDBOX <i class="status-dot"></i></span></div>
     </section>
     <aside class="right-console console" aria-label="Mission route and controls">
       <div class="section-label">OPERATION / 001</div><h2 class="operation-name">DEAD SIGNAL</h2><div class="route-label"><span>SECTOR ROUTE</span><span id="route-progress">00 / 12</span></div><ol id="sector-route" class="sector-route"></ol>
-      <section class="flight-guide"><div class="section-label">FLIGHT CONTROLS</div><div><span>MOVE</span><kbd>W A S D</kbd></div><div><span>FIRE</span><kbd>SPACE</kbd></div><div><span>SMART BOMB</span><kbd>C</kbd></div><div><span>PRECISION</span><kbd>SHIFT</kbd></div><div><span>PAUSE</span><kbd>ESC</kbd></div><p>Auto-fire is on by default.<br>Gamepad: left stick · A fire · B bomb.</p><button id="guide-open" class="text-button">PILOT FIELD MANUAL <span>↗</span></button></section>
+      <section class="flight-guide"><div class="section-label">FLIGHT CONTROLS</div><div><span>MOVE</span><kbd>W A S D</kbd></div><div><span>FIRE</span><kbd>SPACE</kbd></div><div><span>SMART BOMB</span><kbd>C</kbd></div><div><span>PRECISION</span><kbd>SHIFT</kbd></div><div><span>PAUSE</span><kbd>ESC</kbd></div><p>Hold FIRE to shoot. No automatic firing.<br>Gamepad: left stick · A fire · B bomb.</p><button id="guide-open" class="text-button">PILOT FIELD MANUAL <span>↗</span></button></section>
     </aside>
   </main>
   <div id="touch" aria-label="Touch flight controls">
-    <div class="dpad" aria-label="Movement pad"><button class="tbtn" id="t-up" aria-label="Move up">▲</button><button class="tbtn" id="t-left" aria-label="Move left">◀</button><span class="dpad-center" aria-hidden="true">+</span><button class="tbtn" id="t-right" aria-label="Move right">▶</button><button class="tbtn" id="t-down" aria-label="Move down">▼</button></div>
-    <div class="touch-hint">DRAG SHIP<br>OR USE PAD</div>
+    <div id="flight-stick" class="flight-stick" role="group" aria-label="Analog movement thumbstick"><div id="flight-stick-knob" class="flight-stick-knob"></div></div>
+    <div class="touch-hint">ANALOG<br>THUMBSTICK</div>
     <div class="touch-actions"><button class="tbtn" id="t-bomb" aria-label="Use smart bomb">BOMB<small id="touch-bombs">3</small></button><button class="tbtn" id="t-fire" aria-label="Fire weapons">FIRE</button></div>
     <button class="tbtn" id="t-start" hidden>START</button><button class="tbtn" id="t-rst" hidden>RST</button>
   </div>
   <dialog id="utility-dialog" aria-labelledby="dialog-title"><div class="dialog-top"><span class="section-label">BLACKBOX FLIGHT SYSTEMS</span><button id="dialog-close" class="icon-button" aria-label="Close dialog">✕</button></div><div id="dialog-body"></div></dialog>
   <noscript><div class="noscript">Enable JavaScript to fly BLACKBOX SQUADRON.</div></noscript>
-</body>
+<script>
+(function(){
+ const zone=document.getElementById('flight-stick'),knob=document.getElementById('flight-stick-knob');
+ const stick=window.BlackboxStick={x:0,y:0};let active=null;
+ function set(e){const r=zone.getBoundingClientRect(),radius=r.width*.34;let x=(e.clientX-r.left-r.width/2)/radius,y=(e.clientY-r.top-r.height/2)/radius;const m=Math.hypot(x,y);if(m>1){x/=m;y/=m}if(m<.13){x=0;y=0}stick.x=x;stick.y=y;knob.style.left=(50+x*34)+'%';knob.style.top=(50+y*34)+'%'}
+ function clear(){active=null;stick.x=stick.y=0;knob.style.left='50%';knob.style.top='50%'}
+ zone.addEventListener('pointerdown',e=>{if(active!==null)return;e.preventDefault();active=e.pointerId;zone.setPointerCapture(active);set(e)});
+ zone.addEventListener('pointermove',e=>{if(e.pointerId===active){e.preventDefault();set(e)}});
+ for(const event of ['pointerup','pointercancel','lostpointercapture'])zone.addEventListener(event,e=>{if(e.pointerId===active)clear()});
+ window.addEventListener('blur',clear);document.addEventListener('visibilitychange',()=>{if(document.hidden)clear()});
+})();
+</script></body>
 </html>
