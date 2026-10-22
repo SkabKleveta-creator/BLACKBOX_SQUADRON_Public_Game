@@ -313,19 +313,7 @@ No libraries. No assets. Canvas only.
      );
      layer.addEventListener("contextmenu", (e) => e.preventDefault());
 
-     bindHold(document.getElementById("t-up"), (v) => (touchInput.up = v));
-     bindHold(
-       document.getElementById("t-down"),
-       (v) => (touchInput.down = v),
-     );
-     bindHold(
-       document.getElementById("t-left"),
-       (v) => (touchInput.left = v),
-     );
-     bindHold(
-       document.getElementById("t-right"),
-       (v) => (touchInput.right = v),
-     );
+     // Analog thumbstick replaces directional buttons.
      bindHold(
        document.getElementById("t-fire"),
        (v) => (touchInput.fire = v),
