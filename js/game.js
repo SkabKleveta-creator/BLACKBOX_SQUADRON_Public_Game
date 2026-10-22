@@ -65,6 +65,8 @@ No libraries. No assets. Canvas only.
    }
 
    let scoreboardCache = loadScoreboard();
+    // Restore the best score from either the legacy record or local top-ten table.
+    const storedBestScore = Math.max(loadHighScore(), scoreboardCache[0]?.score || 0);
 
    function qualifiesForScoreboard(score) {
      if (score <= 0) return false;
@@ -348,7 +350,7 @@ No libraries. No assets. Canvas only.
    const game = {
      state: STATE.START,
      score: 0,
-     highScore: loadHighScore(),
+     highScore: storedBestScore,
      level: 1,
      killsThisLevel: 0,
      killsNeeded: 10,
@@ -763,7 +765,7 @@ No libraries. No assets. Canvas only.
      }
 
      player.fireCooldown -= dt;
-     if ((keys["Space"] || touchInput.fire || pad?.fire || window.BBPlatform?.settings.autoFire) && player.fireCooldown <= 0) {
+     if ((keys["Space"] || touchInput.fire || pad?.fire) && player.fireCooldown <= 0) {
        firePlayer();
        player.fireCooldown = Math.max(-0.02, player.fireCooldown) + fireRate;
      }
