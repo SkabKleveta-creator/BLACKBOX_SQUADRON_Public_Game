@@ -743,6 +743,8 @@ No libraries. No assets. Canvas only.
      if (keys["ArrowDown"] || keys["KeyS"] || touchInput.down) dy += 1;
      const pad = window.BBPlatform?.gamepadInput;
      if (pad) { dx += pad.dx || 0; dy += pad.dy || 0; }
+     const stick = window.BlackboxStick;
+     if (stick) { dx += stick.x || 0; dy += stick.y || 0; }
      const magnitude = Math.hypot(dx, dy);
      if (magnitude > 1) { dx /= magnitude; dy /= magnitude; }
      const focus = keys.ShiftLeft || keys.ShiftRight;
