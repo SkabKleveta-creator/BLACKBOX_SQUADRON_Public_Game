@@ -7,7 +7,7 @@
 })(typeof window !== 'undefined' ? window : null, function () {
   'use strict';
   const KEYS = Object.freeze({ settings: 'blackbox_squadron_settings_v2', profile: 'blackbox_squadron_profile_v2', checkpoint: 'blackbox_squadron_checkpoint_v1' });
-  const DEFAULT_SETTINGS = Object.freeze({ volume: 0.45, sound: true, music: true, reducedMotion: false, autoFire: true, gamepad: true, difficulty: 'standard' });
+  const DEFAULT_SETTINGS = Object.freeze({ volume: 0.45, sound: true, music: true, reducedMotion: false, gamepad: true, difficulty: 'standard' });
   const DIFFICULTIES = ['cadet', 'standard', 'ace'];
   const number = (v, fallback, min, max) => typeof v === 'number' && Number.isFinite(v) ? Math.min(max, Math.max(min, v)) : fallback;
   const integer = (v, fallback, min, max) => Math.floor(number(v, fallback, min, max));
@@ -15,7 +15,7 @@
   const difficulty = v => DIFFICULTIES.includes(v) ? v : 'standard';
   function validateSettings(value) {
     const v = plain(value), out = { ...DEFAULT_SETTINGS };
-    for (const key of ['sound', 'music', 'reducedMotion', 'autoFire', 'gamepad']) if (typeof v[key] === 'boolean') out[key] = v[key];
+    for (const key of ['sound', 'music', 'reducedMotion', 'gamepad']) if (typeof v[key] === 'boolean') out[key] = v[key];
     out.volume = number(v.volume, DEFAULT_SETTINGS.volume, 0, 1);
     out.difficulty = difficulty(v.difficulty);
     return out;
