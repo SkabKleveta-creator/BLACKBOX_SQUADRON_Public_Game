@@ -1,5 +1,27 @@
 # BLACKBOX SQUADRON
 
+## Current playable build: v0.6.1 — ITCH SANDBOX
+
+[Play BLACKBOX SQUADRON](https://skabkleveta-creator.github.io/BLACKBOX_SQUADRON_Public_Game/)
+
+The root `index.html` is now the complete standalone build prepared and tested in Chat. It includes the twelve-sector Operation Dead Signal campaign, four bosses, and a separate Survival event: uninterrupted combat until destroyed, without bosses, levels, sector upgrade screens, or victory. In-flight pickups remain available.
+
+Updates include manual held FIRE for all weapons and drones, analog touch movement, persistent validated local records, a smaller HUD, larger playfield, and procedural visual overhaul. Keyboard: WASD/arrows to move, Space to fire, C to bomb, Shift for precision, Escape/P to pause. Touch: left stick and right FIRE/BOMB. Gamepad flight controls are implemented; physical hardware was not tested.
+
+This remains an in-development sandbox. Known issues: a sustained beam can consume a shield then hull during one activation; boss artwork extends beyond some hitboxes; the player silhouette clips at horizontal edges. See [build and test evidence](docs/BUILD_AND_TEST_REPORT_v0.6.1.md). The report describes the earlier local-only build execution; this later repository update was authorized separately on October 23, 2026.
+
+Game HTML SHA256: `44e751dd63eb69ab4bddd30d2be310b8cd69980f660897dcc1de7037240ded8a`.
+
+The standalone HTML is authoritative for current gameplay. Existing `js/`, `css/`, PWA files, and their Node tests remain as historical modular source; those tests do not validate the new bundled game. The new HTML makes no service-worker registration. Existing installed v0.5 caches may still display the older game; workers and caches were not modified by this update. Clean-browser package launch and blocked-storage fallback passed in Chromium. Actual itch.io hosting, physical mobile/controller testing, and other browsers remain unverified.
+
+Local records use the separate sandbox namespace. Accessible valid legacy records are read for migration, not overwritten. No cross-browser/device/origin transfer is promised.
+
+## Historical v0.5.0 documentation
+
+The following describes the retained modular version, not the current standalone entry point.
+
+# BLACKBOX SQUADRON
+
 A native Canvas arcade shooter. Pilot the X-01 through **Operation Dead Signal**: twelve combat sectors, four command ships, field upgrades, and an endless frontier.
 
 **Current release: v0.5.0 — Operation Dead Signal**
